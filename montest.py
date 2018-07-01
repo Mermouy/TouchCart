@@ -1,6 +1,7 @@
 # Copyright (c) 2014 Adafruit Industries
 # Origin Author: Tony DiCola
 # Author: Mermouy
+# CopyWrong 2018
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +26,8 @@ import time
 import pygame.mixer
 import Adafruit_MPR121.MPR121 as MPR121
 
-ogg_zic = "/home/pi/Musique/ogg/"
-wav_zic = "/home/pi/Musique/wav/"
+ogg_zic = "./ogg/"
+wav_zic = "./wav/"
 musique_fond = ogg_zic + "bg.ogg"
 
 # Fonction volume + et -
