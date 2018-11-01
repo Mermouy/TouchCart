@@ -30,8 +30,8 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-ogg_zic = "./ogg/"
-wav_zic = "./wav/"
+ogg_zic = "/home/pi/TouchCart/ogg/"
+wav_zic = "/home/pi/TouchCart/wav/"
 musique_fond = ogg_zic + "bg.ogg"
 
 # Fonction volume + et -
@@ -138,10 +138,10 @@ while running:
 				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
                                 GPIO.setup(19,GPIO.OUT)
-                                print("Led On")
 				GPIO.output(19,GPIO.HIGH)
-				time.sleep(1)
-				print("Led Off")
+                                print("Solenoid Out")
+				time.sleep(3)
+				print("Solenoid In")
 				GPIO.output(19,GPIO.LOW)
 			if cap.is_touched(10):
 				new_vol = vol_down()
