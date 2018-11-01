@@ -25,6 +25,10 @@ import sys
 import time
 import pygame.mixer
 import Adafruit_MPR121.MPR121 as MPR121
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 ogg_zic = "./ogg/"
 wav_zic = "./wav/"
@@ -32,11 +36,11 @@ musique_fond = ogg_zic + "bg.ogg"
 
 # Fonction volume + et -
 def vol_up():
-	new_vol= round(pygame.mixer.music.get_volume(), 1) + 0.1 
+	new_vol = round(pygame.mixer.music.get_volume(), 1) + 0.1
 	if new_vol >= 0.7:
 		return 0.7
 	return new_vol
-    
+
 def vol_down():
 	new_vol = round(pygame.mixer.music.get_volume(), 1) - 0.1
 	if new_vol <= 0.0:
@@ -84,7 +88,7 @@ pygame.mixer.music.play(-1)
 
 # Init sounds volume
 def get_vol():
-	return pygame.mixer.music.get_volume() + 0.3
+	return round(pygame.mixer.music.get_volume(),1) + 0.3
 
 # Define mapping of capacitive touch pin presses to sound files
 # tons more sounds are available in /opt/sonic-pi/etc/samples/ and
@@ -133,14 +137,18 @@ while running:
 				pygame.mixer.music.set_volume(new_vol)
 				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
-			elif cap.is_touched(10):
+                                GPIO.setup(19,GPIO.OUT)
+                                print("Led On")
+				GPIO.output(19,GPIO.HIGH)
+				time.sleep(1)
+				print("Led Off")
+				GPIO.output(19,GPIO.LOW)
+			if cap.is_touched(10):
 				new_vol = vol_down()
 				vol = new_vol + 0.3
 				pygame.mixer.music.set_volume(new_vol)
 				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
-			else:
-				print('none')
 		if not current_touched & pin_bit and last_touched & pin_bit:
 			print '{0} released!'.format(i)
 
