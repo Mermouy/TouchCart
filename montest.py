@@ -27,6 +27,7 @@ import pygame.mixer
 import Adafruit_MPR121.MPR121 as MPR121
 import RPi.GPIO as GPIO
 import alsaaudio
+import os
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -44,12 +45,16 @@ musique_fond = ogg_zic + "Truck_soundscape_v2.ogg"
 vol_max = 100
 min_vol = 30
 vol_step = 5
+bg_vol = 0.8
 
 ### Fonctions
 
 m = alsaaudio.Mixer('PCM')
 current_volume = m.getvolume() # Get the current Volume
 m.setvolume(70)
+os.system('espeak -v french-mbrola-1 --stdout -f penitence.txt -a 200 -s 130 -p 30 | oggenc -q 7 --resample 44100 -o ogg/penitence.ogg - && sleep 1')
+os.system('espeak -v french-mbrola-1 --stdout -f bienvenue.txt -a 200 -s 130 -p 30 | oggenc -q 7 --resample 44100 -o ogg/bienvenue.ogg - ')
+os.system('espeak -v french-mbrola-1 --stdout -f aider.txt -a 200 -s 130 -p 30 | oggenc -q 7 --resample 44100 -o ogg/aider.ogg - ')
 
 # Fonction volume + et -
 def vol_up():
@@ -99,7 +104,7 @@ pygame.init()
 
 # Lancement fond sonore
 pygame.mixer.music.load(musique_fond)
-pygame.mixer.music.set_volume(0.8)
+pygame.mixer.music.set_volume(bg_vol)
 pygame.mixer.music.play(-1)
 
 # Init sounds volume
@@ -111,17 +116,17 @@ def get_vol():
 # /usr/share/scratch/Media/Sounds/
 SOUND_MAPPING = {
 	0: ogg_zic + 'baby.ogg',
-	1: ogg_zic + 'attention.ogg',
-	2: ogg_zic + 'boite.ogg',
-	3: ogg_zic + 'buddha.ogg',
-	4: ogg_zic + 'klaxons.ogg',
-	5: ogg_zic + 'helpyou.ogg',
-	6: ogg_zic + 'lazer.ogg',
-	7: ogg_zic + 'modem.ogg',
-	8: ogg_zic + 'police.ogg',
+	1: ogg_zic + 'applause0.ogg',
+	2: ogg_zic + 'helpyou.ogg',
+	3: ogg_zic + 'brass.ogg',
+	4: ogg_zic + 'penitence.ogg',
+	5: ogg_zic + 'bienvenue.ogg',
+	6: ogg_zic + 'aider.ogg',
+	7: ogg_zic + 'sirene.ogg',
+	8: ogg_zic + 'yeah.ogg',
 	9: ogg_zic + 'recul.ogg',
 	10: ogg_zic + 'yeah.ogg',
-	11: ogg_zic + 'whatru.ogg',
+	11: ogg_zic + 'foraine.ogg',
 }
 
 sounds = [0,0,0,0,0,0,0,0,0,0,0,0]
@@ -151,13 +156,10 @@ while running:
 				new_vol = vol_up()
 				# vol = new_vol + 0.3
 				m.setvolume(new_vol) #pygame.mixer.music.set_volume(new_vol)
-#				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
 			if cap.is_touched(10):
 				new_vol = vol_down()
-				#vol = new_vol + 0.3
 				m.setvolume(new_vol) #pygame.mixer.music.set_volume(new_vol)
-#				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
 		if not current_touched & pin_bit and last_touched & pin_bit:
 			print '{0} released!'.format(i)
