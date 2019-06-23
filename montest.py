@@ -32,7 +32,7 @@ GPIO.setwarnings(False)
 
 ogg_zic = "/home/pi/TouchCart/ogg/"
 wav_zic = "/home/pi/TouchCart/wav/"
-musique_fond = ogg_zic + "bg.ogg"
+musique_fond = ogg_zic + "Truck_soundscape_v2.ogg"
 
 # Fonction volume + et -
 def vol_up():
