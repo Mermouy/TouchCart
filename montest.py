@@ -1,7 +1,7 @@
 # Copyright (c) 2014 Adafruit Industries
 # Origin Author: Tony DiCola
 # Author: Mermouy
-# CopyWrong 2018
+# CopyWrong 2019
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,26 +26,49 @@ import time
 import pygame.mixer
 import Adafruit_MPR121.MPR121 as MPR121
 import RPi.GPIO as GPIO
+import alsaaudio
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+### Variables
+
+# Dossiers et fichiers
 ogg_zic = "/home/pi/TouchCart/ogg/"
 wav_zic = "/home/pi/TouchCart/wav/"
 musique_fond = ogg_zic + "Truck_soundscape_v2.ogg"
 
+# Volume
+#vol_max = 0.8
+#min_vol = 0.0
+vol_max = 100
+min_vol = 30
+vol_step = 5
+
+### Fonctions
+
+m = alsaaudio.Mixer('PCM')
+current_volume = m.getvolume() # Get the current Volume
+m.setvolume(70)
+
 # Fonction volume + et -
 def vol_up():
-	new_vol = round(pygame.mixer.music.get_volume(), 1) + 0.1
-	if new_vol >= 0.7:
-		return 0.7
-	return new_vol
+#	new_vol = round(pygame.mixer.music.get_volume(), 1) + 0.1
+	current_volume = m.getvolume() # Get the current Volume
+	new_vol = current_volume[0] + vol_step
+	if new_vol >= vol_max:
+		return vol_max
+	else:
+		return new_vol
 
 def vol_down():
-	new_vol = round(pygame.mixer.music.get_volume(), 1) - 0.1
-	if new_vol <= 0.0:
-		return 0.0
-	return new_vol
+#	new_vol = round(pygame.mixer.music.get_volume(), 1) - 0.1
+	current_volume = m.getvolume() # Get the current Volume
+	new_vol = current_volume[0] - vol_step
+	if new_vol <= min_vol:
+		return min_vol
+	else:
+		return new_vol
 
 # Create sound library to avoid redundance load
 _sound_library = {}
@@ -60,7 +83,7 @@ def play_sound(path):
 # Thanks to Scott Garner & BeetBox!
 # https://github.com/scottgarner/BeetBox/
 
-print 'Adafruit MPR121 Capacitive Touch Audio Player Mon Test'
+print 'Truck a trucs Touch Audio Player Test'
 
 # Create MPR121 instance.
 cap = MPR121.MPR121()
@@ -68,27 +91,20 @@ cap = MPR121.MPR121()
 # Initialize communication with MPR121 using default I2C bus of device, and
 # default I2C address (0x5A).  On BeagleBone Black will default to I2C bus 0.
 if not cap.begin():
-	print 'Error initializing MPR121.  Check your wiring!'
+	print 'Error initializing MPR121.  Check wiring!'
 	sys.exit(1)
-
-# Alternatively, specify a custom I2C address such as 0x5B (ADDR tied to 3.3V),
-# 0x5C (ADDR tied to SDA), or 0x5D (ADDR tied to SCL).
-#cap.begin(address=0x5B)
-
-# Also you can specify an optional I2C bus with the bus keyword parameter.
-#cap.begin(bus=1)
 
 pygame.mixer.pre_init(44100, -16, 12, 512)
 pygame.init()
 
 # Lancement fond sonore
 pygame.mixer.music.load(musique_fond)
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0.8)
 pygame.mixer.music.play(-1)
 
 # Init sounds volume
 def get_vol():
-	return round(pygame.mixer.music.get_volume(),1) + 0.3
+	return round(pygame.mixer.music.get_volume(),1) + 0.2
 
 # Define mapping of capacitive touch pin presses to sound files
 # tons more sounds are available in /opt/sonic-pi/etc/samples/ and
@@ -133,21 +149,15 @@ while running:
 		# Check 11 & 10 pour modification volume
 			if cap.is_touched(11):
 				new_vol = vol_up()
-				vol = new_vol + 0.3
-				pygame.mixer.music.set_volume(new_vol)
-				print("Volume est maintenant: " + str(vol))
+				# vol = new_vol + 0.3
+				m.setvolume(new_vol) #pygame.mixer.music.set_volume(new_vol)
+#				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
-                                GPIO.setup(19,GPIO.OUT)
-				GPIO.output(19,GPIO.HIGH)
-                                print("Solenoid Out")
-				time.sleep(3)
-				print("Solenoid In")
-				GPIO.output(19,GPIO.LOW)
 			if cap.is_touched(10):
 				new_vol = vol_down()
-				vol = new_vol + 0.3
-				pygame.mixer.music.set_volume(new_vol)
-				print("Volume est maintenant: " + str(vol))
+				#vol = new_vol + 0.3
+				m.setvolume(new_vol) #pygame.mixer.music.set_volume(new_vol)
+#				print("Volume est maintenant: " + str(vol))
 				print("Volume de la zique est maintenant de: " + str(new_vol))
 		if not current_touched & pin_bit and last_touched & pin_bit:
 			print '{0} released!'.format(i)
