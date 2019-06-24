@@ -115,9 +115,9 @@ def get_vol():
 # tons more sounds are available in /opt/sonic-pi/etc/samples/ and
 # /usr/share/scratch/Media/Sounds/
 SOUND_MAPPING = {
-	0: ogg_zic + 'baby.ogg',
+	0: ogg_zic + 'bouchon.ogg',
 	1: ogg_zic + 'applause0.ogg',
-	2: ogg_zic + 'helpyou.ogg',
+	2: ogg_zic + 'aidezmoi.ogg',
 	3: ogg_zic + 'brass.ogg',
 	4: ogg_zic + 'penitence.ogg',
 	5: ogg_zic + 'bienvenue.ogg',
@@ -125,8 +125,8 @@ SOUND_MAPPING = {
 	7: ogg_zic + 'sirene.ogg',
 	8: ogg_zic + 'yeah.ogg',
 	9: ogg_zic + 'recul.ogg',
-	10: ogg_zic + 'yeah.ogg',
-	11: ogg_zic + 'foraine.ogg',
+	10: ogg_zic + 'foraine.ogg',
+	11: ogg_zic + 'truckatrucs.ogg',
 }
 
 sounds = [0,0,0,0,0,0,0,0,0,0,0,0]
