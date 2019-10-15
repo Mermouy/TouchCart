@@ -38,14 +38,6 @@ GPIO.setwarnings(False)
 ogg_zic = "/home/pi/TouchCart/ogg/"
 musique_fond = ogg_zic + "Truck_soundscape_v2.ogg"
 
-# Volume
-#vol_max = 0.8
-#min_vol = 0.0
-vol_max = 100
-min_vol = 30
-vol_step = 5
-bg_vol = 0.8
-
 # Extinction
 # Utilisation des numeros des broches du SOC
 # Initialisation de la broche en lecture avec activation des pullups internes
@@ -53,42 +45,16 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Generation des fichiers par espeak
-m = alsaaudio.Mixer('PCM')
-current_volume = m.getvolume() # Get the current Volume
-m.setvolume(70)
+#m = alsaaudio.Mixer('PCM')
+#current_volume = m.getvolume() # Get the current Volume
+#m.setvolume(70)
 os.system('espeak -v french-mbrola-1 --stdout -f penitence.txt -a 200 -s 130 -p 30 | oggenc -q 7 --resample 44100 -o ogg/penitence.ogg - && sleep 1')
 os.system('espeak -v french-mbrola-1 --stdout -f bienvenue.txt -a 200 -s 130 -p 30 | oggenc -q 7 --resample 44100 -o ogg/bienvenue.ogg - ')
 os.system('espeak -v french-mbrola-1 --stdout -f aider.txt -a 200 -s 130 -p 30 | oggenc -q 7 --resample 44100 -o ogg/aider.ogg - ')
 
 ### Fonctions
-# fonction halt
-def Shutdown(channel):
-    print("Arret du Pi...")
-    time.sleep(5)
-    m.setvolume(0)
-    os.system("sudo shutdown -h now")
-
 # Ajout de la fonction a executer quand on appuie sur le bouton
 #GPIO.add_event_detect(17, GPIO.FALLING, callback=Shutdown, bouncetime=2000)
-
-# Fonction volume + et -
-def vol_up():
-#	new_vol = round(pygame.mixer.music.get_volume(), 1) + 0.1
-	current_volume = m.getvolume() # Get the current Volume
-	new_vol = current_volume[0] + vol_step
-	if new_vol >= vol_max:
-		return vol_max
-	else:
-		return new_vol
-
-def vol_down():
-#	new_vol = round(pygame.mixer.music.get_volume(), 1) - 0.1
-	current_volume = m.getvolume() # Get the current Volume
-	new_vol = current_volume[0] - vol_step
-	if new_vol <= min_vol:
-		return min_vol
-	else:
-		return new_vol
 
 # Create sound library to avoid redundance load
 _sound_library = {}
@@ -119,7 +85,7 @@ pygame.init()
 
 # Lancement fond sonore
 pygame.mixer.music.load(musique_fond)
-pygame.mixer.music.set_volume(bg_vol)
+pygame.mixer.music.set_volume(70)
 pygame.mixer.music.play(-1)
 
 # Init sounds volume
@@ -130,8 +96,8 @@ def get_vol():
 # tons more sounds are available in /opt/sonic-pi/etc/samples/ and
 # /usr/share/scratch/Media/Sounds/
 SOUND_MAPPING = {
-	0: ogg_zic + 'bouchon.ogg',
-	1: ogg_zic + 'applause0.ogg',
+	0: ogg_zic + 'applause0.ogg',
+	1: ogg_zic + 'bouchon.ogg',
 	2: ogg_zic + 'aidezmoi.ogg',
 	3: ogg_zic + 'brass.ogg',
 	4: ogg_zic + 'penitence.ogg',
@@ -166,20 +132,11 @@ while running:
 			print '{0} touched!'.format(i)
 			if (sounds[i]):
 				sounds[i].play()
-		# Check 11 & 10 pour modification volume et shutdown:
-			if cap.is_touched(11) and cap.is_touched(10):
-				    os.system("sudo shutdown -h now")
-			if cap.is_touched(11):
-				new_vol = vol_up()
-				# vol = new_vol + 0.3
-				m.setvolume(new_vol) #pygame.mixer.music.set_volume(new_vol)
-#				print("Volume de la zique est maintenant de: " + str(new_vol))
-			if cap.is_touched(10):
-				new_vol = vol_down()
-				m.setvolume(new_vol) #pygame.mixer.music.set_volume(new_vol)
-#				print("Volume de la zique est maintenant de: " + str(new_vol))
 		if not current_touched & pin_bit and last_touched & pin_bit:
 			print '{0} released!'.format(i)
+		if cap.is_touched(1):
+			print 'Pin 0 is being touched!'
+			os.system('sudo halt')
 
     # Update last state and wait a short period before repeating.
 	last_touched = current_touched
