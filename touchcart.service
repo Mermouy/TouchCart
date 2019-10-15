@@ -1,0 +1,10 @@
+[Unit]
+Description=Gestion Touchcart
+
+[Service]
+User=pi
+Group=pi
+ExecStart=/usr/bin/python "/home/pi/bin/touchcart"
+
+[Install]
+WantedBy=multi-user.target
